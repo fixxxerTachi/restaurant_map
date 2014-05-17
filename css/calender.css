@@ -1,0 +1,50 @@
+@charset "utf-8";
+#calender table{
+	width: 200px;
+	margin: 10px 10px 30px 0;
+	float:left;
+	text-align: center;
+	color: #999;
+}
+#calender caption{
+	color: #555;
+	font-weight: bold;
+	font-size: 18px;
+	margin-bottom:10px;
+}
+#calender table tr{
+}
+	
+#calender table th{
+	padding: 1px;
+}
+
+
+.sun{
+	color: #f00;
+}
+.sat{
+	color: #00F;
+}
+#calender table td{
+	padding: 3px;
+}
+
+#calender table a{
+	color: #444;
+	font-weight: bold;
+}
+#calender:after{
+	content: '.';
+	display: block;
+	visibility: hidden;
+	height: 0;
+	clear: both;
+}
+
+/*#form{
+	clear: left;
+}
+#form input{
+	margin: 10px;
+}*/

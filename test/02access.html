@@ -1,0 +1,136 @@
+<!doctype html><html><head>
+<meta charset='utf-8'>
+<meta name~'viewport' content='width=divice-width,initial-scale=1'>
+</head><body>
+<div id='info'>
+	<input type='text' id='data'>
+</div>
+<div id='map'></div>
+</body></html>
+<style type='text/css'>
+#map{
+	width: 800px;
+	height: 800px;
+}
+</style>
+<script src='js/jquery.min.js'></script>
+<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
+<script src='js/gmap3.min.ver5.js'></script>
+<script>
+function getPosition(){
+	navigator.geolocation.watchPosition(
+		function(position){
+			var lat=position.coords.latitude;
+			var lng=position.coords.longitude;
+			//var text=lat + ',' + lng;
+			//document.getElementById('data').value=text;
+			alert(lat + '/' + lng);
+			var latlng=new google.maps.LatLng(lat,lng);
+			var geocoder=new google.maps.Geocoder();
+			geocoder.geocode({'latLng':latlng},function(results,status){
+				if(status==google.maps.GeocoderStatus.OK){
+					if(results){
+						//alert(lat + '/' + lng);
+						document.getElementById('data').value=results[1].formatted_address;
+						testRegex(results[1].formatted_address.replace('日本,',''),lat,lng);
+					}
+				}else{
+					alert('Geododer failed dut to:' + status);
+				}
+			});
+		},
+		function(error){
+			//lat=36.494624;
+			//lng=139.880088;
+			lat=36.5585372;
+			lng=139.8900507;
+			var latlng=new google.maps.LatLng(lat,lng);
+			var geocoder=new google.maps.Geocoder();
+			geocoder.geocode({'latLng':latlng},function(results,status){
+				if(status==google.maps.GeocoderStatus.OK){
+					if(results){
+						console.log(results);
+						//document.getElementById('data').value=results[1].formatted_address + '(仮)';
+						document.getElementById('data').value=results[1].formatted_address.replace('日本,','');
+						testRegex(results[1].formatted_address.replace('日本,',''),lat,lng);
+					}
+				}else{
+					alert('Geododer failed dut to:' + status);
+				}
+			});
+		}
+	);
+}
+
+function testRegex(str,lat,lng){
+	var reg=/^.+市|区|町|村/;
+	var results=str.match(reg);
+	console.log(results);	
+	var shopPositions=new Array();
+	shopPositions.push({latLng:[lat,lng],options:{icon:'http://maps.google.com/mapfiles/marker.png'}});
+	$.get('xml.php',{address:results[0]}).done(function(data,statusText,jqXHR){
+			$.each($('rest',data),function(k,v){
+				position_str=$('latitude',v).text() + ',' + $('longitude',v).text();
+				data_str='<p class="map_data"><a href="' + $('url',v).text() + '">' + $('name',v).text() +  '</p>';
+				shopPositions.push({address: position_str,data: data_str});	
+			});
+			showMap(lat,lng,shopPositions);
+	});
+}
+
+function showMap(lat,lng,positions){
+	var center_p=new Array();
+	center_p.push(lat,lng);
+	//center_p.push(lng);
+	$('#map').gmap3(
+		{
+			map:{
+				options:{
+					center:center_p,
+					zoom:14
+				}
+			},
+			marker:{
+				values:positions,
+				options:{
+					//icon:new google.maps.MarkerImage('img/logo4.gif',new google.maps.Size(50,50))
+					icon:'http://maps.google.com/mapfiles/ms/micons/restaurant.png',
+				},
+				events:{
+					click:function(marker,event,context){
+						var map=$(this).gmap3('get');
+						var infowindow=$(this).gmap3({get:{name:"infowindow"}});
+						if(infowindow){
+							infowindow.open(map,marker);
+							infowindow.setContent(context.data);
+						}else{
+							$(this).gmap3({
+								infowindow:{
+									anchor:marker,
+									options:{content:context.data}
+								}
+							})
+						}
+					},
+					touchstart:function(marker,event,context){
+						var map=$(this).gmap3('get');
+						var infowindow=$(this).gmap3({get:{name:"infowindow"}});
+						if(infowindow){
+							infowindow.open(map,marker);
+							infowindow.setContent(context.data);
+						}else{
+							$(this).gmap3({
+								infowindow:{
+									anchor:marker,
+									options:{content:context.data}
+								}
+							})
+						}
+					}
+				}
+			}
+		}
+	);
+}
+getPosition();
+</script>

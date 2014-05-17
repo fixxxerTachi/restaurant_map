@@ -1,0 +1,14 @@
+div#page a{
+	padding: 10px;
+	font-size: 1.1em;
+}
+p#message{
+	margin-top: 10px;
+}
+.my-inline input[type='text']{
+	width: 30%;
+}
+div#page .pagination li a{
+	display: block;
+	width: 40px; 
+}

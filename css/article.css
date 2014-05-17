@@ -1,0 +1,15 @@
+div#list{
+	margin-left: 70px;
+}
+div#list a{
+	text-decoration: none;
+}
+div.errorMessage,div.successMessage{	
+	color: #f00;
+	font-size: 1.2em;
+	border: solid 1px #f00;
+	border-radius: 5px;
+	width: 300px;
+	padding: 5px 0px 5px 20px;
+	margin-bottom: 10px;
+}
